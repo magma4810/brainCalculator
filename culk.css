@@ -1,0 +1,20 @@
+.clear{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+.input{
+    width: 25px;
+}
+
+.score{
+    position: absolute;
+    top: 10px;
+    right: 180px;
+}
+
+.record{
+    position: absolute;
+    top: 10px;
+    right: 110px;
+}
