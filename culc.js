@@ -2,9 +2,8 @@
 
 (async function(){
     const list = document.querySelector('#list');
-    const storageKey = 'items';
     //читка массива ответов
-    async function readList(){
+    async function readList(storageKey){
         try{
             const storage = localStorage.getItem(storageKey);
             return storage === null ? [] : JSON.parse(storage); 
@@ -13,27 +12,34 @@
             return [];
         }
     }
-    const items = await readList();
+    const items = await readList('items');
     //отрисовка текста
-    function drawList(list,items){
-        list.innerHTML = `<ol>${items.map((el)=>`<li>${el}</li>`).join('')}</ol>`;
+    function drawList(list,items,select){
+        if (select === 1){
+            list.innerHTML = `<ol>${items.map((el)=>`<li>${el}</li>`).join('')}</ol>`;
+        }else{
+            list.innerHTML = `<em>Score:${items[0]}   Record:${items[1]}<em>`
+        }
+        
     }
-
+    const score_and_record = document.querySelector('.score_and_record')
+    const scoreRecord = [0,0];
     function goCulc(){
         showMathExample();
-        drawList(list,items);
+        drawList(list,items,1);
+        drawList(score_and_record,scoreRecord,2);
         clear.hidden = false;
         form.hidden = false;
         go.hidden = true;
     }
 
-    function saveList(items){
+    function saveList(items,storageKey){
         localStorage.setItem(storageKey,JSON.stringify(items))
     }
     function clearList(){
         items.splice(0,items.length)
         saveList(items)
-        drawList(list,items)
+        drawList(list,items,1)
     }
     function getRandomInt(max) {
         return Math.floor(Math.random() * max);
@@ -49,9 +55,21 @@
         const num1 = Number(splitExample[0])
         const num2 = Number(splitExample[4])
         if (value == num1+num2){
+            scoreRecord[0]++;
+            drawList(score_and_record,scoreRecord,2);
             return `${num1} + ${num2} = ${value} TRUE`
         }else{
-            return `${num1} + ${num2} = ${value} FALSE`
+            if (scoreRecord[0] > scoreRecord[1]){
+                scoreRecord[1] = scoreRecord[0];
+                scoreRecord[0] = 0;
+                drawList(score_and_record,scoreRecord,2);
+                return `${num1} + ${num2} = ${value} FALSE`
+            }else{
+                scoreRecord[0] = 0;
+                drawList(score_and_record,scoreRecord,2);
+                return `${num1} + ${num2} = ${value} FALSE`
+            }
+            
         }
     }
     
@@ -76,9 +94,9 @@
 
         items.push(mathExample(example,value));
 
-        saveList(items);
+        saveList(items,'items');
 
-        drawList(list,items);
+        drawList(list,items,1);
 
         showMathExample()
     })//сделать очки и рекорд 
