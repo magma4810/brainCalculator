@@ -13,17 +13,25 @@
         }
     }
     const items = await readList('items');
+    const scoreRecord = await readList('score_and_record');
     //отрисовка текста
     function drawList(list,items,select){
         if (select === 1){
             list.innerHTML = `<ol>${items.map((el)=>`<li>${el}</li>`).join('')}</ol>`;
         }else{
-            list.innerHTML = `<em>Score:${items[0]}   Record:${items[1]}<em>`
+            if (items.length < 2){
+                items[0] = 0;
+                items[1] = 0;
+                list.innerHTML = `<em>Score:${items[0]}   Record:${items[1]}<em>`
+            }else{
+                list.innerHTML = `<em>Score:${items[0]}   Record:${items[1]}<em>`
+            }
+            
         }
         
     }
     const score_and_record = document.querySelector('.score_and_record')
-    const scoreRecord = [0,0];
+
     function goCulc(){
         showMathExample();
         drawList(list,items,1);
@@ -93,7 +101,7 @@
         
 
         items.push(mathExample(example,value));
-
+        saveList(scoreRecord,'score_and_record')
         saveList(items,'items');
 
         drawList(list,items,1);
